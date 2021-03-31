@@ -1,70 +1,66 @@
+import random
+import time
 
-#Main Menu of dice Game
-print("Welcome to the multiplayer Dice Game, please enter 1,2 or 3")
-option = input("1. Log in\n2. Create a New User\n3. Quit")
-#End variable is used to contiounsly loop the option chosen in the menu
-end=False
-valid=False
-while end==False:
+def readfile(filename):
+    file = open(filename,"r")
+    contents = file.readlines()
+    file.close()
+    return contents
+
+def writefile(filename,entry):
+    file = open(filename,"a+")
+    file.write(entry)
+    file.close()
+
     
-    #Logging in
-    if option == "1":
-        username = input("Please enter your username")
-        #To check if the user has not entered nothing
-        while len(username)==0:
-            username=input("You have not entered anything\nPlease enter your username")
-        password = input("Please enter your password")
-        while len(password)==0:
-            password=input("You have not entered anything\nPlease enter your password")
-        #This will judge if the cridentials are valid or not
-        usersfile = open("users.txt","r")
-        users=usersfile.readlines()
-
-        #Using for loop to check through each line whether or not
-        #the credientials given are valid(found in the folder)
-        for row in users:
-            row=row.strip("\n")
-            row=row.split(",")
-            
-            if username == row[0] and password == row[1]:
-                valid=True
-                print("User has been validated")
-                end=True
-        if valid==True:
-            break
-        print("User has not been validated please try again")
-        usersfile.close()
-        
-    #Creating a new user
-    elif option == "2":
-        
-        print("You have selected to create a new user")
-
-        #Creating a new username
-        newusername = input("Please enter a username")
-        #To check if the user has not entered nothing
-        while len(newusername)==0:
-            newusername=input("You have not entered anything\nPlease enter a username")
-
-        #Creating a new password
-        newpassword = input("Please enter a password\nThe password must be more than 8 characters, for example john7atschool")
-        #To check if the user has not entered nothing
-        while len(newpassword)==0:
-            newpassword=input("You have not entered anything\nPlease enter a password")
-        while len(newpassword)<7:
-            newpassword=input("You have not entered a password that is more than 8 characteres")
-
-        #Writing user cridentials to a file
-        usersfile = open("users.txt","a+")
-        usersfile.write(newusername+","+newpassword+"\n")
-        usersfile.close()
-        valid=True
-        end=True
-
-    elif option=="3":
-        #Allowing the user to quit the program if they chose option 3
-        end=True
-        
+def mainMenu():
+    #Main Menu of dice Game
+    print("Welcome to the multiplayer Dice Game, please enter 1,2 or 3")
+    option = input("1. Log in\n2. Create a New User\n3. Quit\n")
+    #End variable is used to contiounsly loop the option chosen in the menu
+    end=False
+    while end==False:
+        #Logging in
+        if option == "1":
+            username = input("Please enter your username")
+            #To check if the user has not entered nothing
+            while len(username)==0:
+                username=input("You have not entered anything\nPlease enter your username")
+            password = input("Please enter your password")
+            while len(password)==0:
+                password=input("You have not entered anything\nPlease enter your password")
+            #This will judge if the cridentials are valid or not
+            users = readfile("users.txt")
+            #Using for loop to check through each line whether or not
+            #the credientials given are valid(found in the folder)
+            for row in users:
+                row=row.strip("\n")
+                row=row.split(",")
+                if username == row[0] and password == row[1]:
+                    print("User has been validated")
+                    return True
+            print("User has not been validated please try again")
+        #Creating a new user
+        elif option == "2":
+            print("You have selected to create a new user")
+            #Creating a new username
+            newusername = input("Please enter a username")
+            #To check if the user has not entered nothing
+            while len(newusername)==0:
+                newusername=input("You have not entered anything\nPlease enter a username")
+            #Creating a new password
+            newpassword = input("Please enter a password\nThe password must be more than 8 characters, for example john7atschool")
+            #To check if the user has not entered nothing
+            while len(newpassword)==0:
+                newpassword=input("You have not entered anything\nPlease enter a password")
+            while len(newpassword)<7:
+                newpassword=input("You have not entered a password that is more than 8 characteres")
+            #Writing user cridentials to a file
+            writefile("users.txt",newusername+","+newpassword+"\n")
+            return True
+        elif option=="3":
+            #Allowing the user to quit the program if they chose option 3
+            return False
     
 #Creating a function called score() which will return back the scores of two random dices
 def score():
@@ -74,31 +70,31 @@ def score():
     dice2=random.randint(1,6)
     return dice1,dice2
     
-
-if valid==True:
+def displayDice():
+    print("000000000000")
+    print("0          0")
+    print("0  #    #  0")
+    print("0    #     0")
+    print("0  #    #  0")
+    print("0          0")
+    print("000000000000")
+    
+if mainMenu() == True:
     #Start of dice game code
-    #importing libaries neccesary for comptetitve environment and random generation
-    import random
-    import time
     rounds = 0
     total1 = 0
     total2 = 0
-
     #Introductary for when the game will start
     for i in range(3,0,-1):
         print("Starting the game in",i)
         time.sleep(1)
-        
     #Will always loop code before rounds>5
     while rounds<5:
-        
         #Player 1's turn
         print("Player 1's turn")
-        
         time.sleep(3)
         score1=score()
         total1=total1+score1[0]+score1[1]
-        
         #Rolling a double
         if score1[0]==score1[1]:
             print("Player 1 rolled a", score1[0],"and a",score1[1])
@@ -112,7 +108,6 @@ if valid==True:
             time.sleep(1)
             print("Player 1 gained",dice+score1[0]+score1[1],"points")
             time.sleep(3)
-            
         else:
             #Adding both dices together to one variable, since we know it is not double
             totaldicescore1=score1[0]+score1[1]
@@ -125,8 +120,6 @@ if valid==True:
                 time.sleep(1)
                 print("Player 1 gained",totaldicescore1+10,"points")
                 time.sleep(3)
-                
-                  
             #Rolling an odd
             elif totaldicescore1%2==1:
                 print("Player 1 rolled a total of",totaldicescore1)
@@ -136,8 +129,6 @@ if valid==True:
                 time.sleep(1)
                 print("Player 1 gained",totaldicescore1-5,"points")
                 time.sleep(3)
-        
-
             
         #Player 2's turn
         print("\n")
@@ -145,7 +136,6 @@ if valid==True:
         time.sleep(3)
         score2=score()
         total2=total2+score2[0]+score2[1]
-        
         #Rolling a double
         if score2[0]==score2[1]:
             print("Player 2 rolled a", score2[0],"and a",score2[1])
@@ -172,9 +162,6 @@ if valid==True:
                 time.sleep(1)
                 print("Player 2 gained",totaldicescore2+10,"points")
                 time.sleep(3)
-             
-
-                      
             #Rolling an odd
             if totaldicescore2%2==1:
                 print("Player 2 rolled a total of",totaldicescore2)
@@ -184,16 +171,11 @@ if valid==True:
                 time.sleep(1)
                 print("Player 2 gained",totaldicescore2-5,"points")
                 time.sleep(3)
-          
-
-      
-
         #Checks that the total score of each player does not equal to 0
         if total1<0:
             total1=0
         elif total2<0:
             total2=0
-
         print("Round",rounds+1,"over")
         rounds=rounds+1
         time.sleep(1)
@@ -205,24 +187,12 @@ if valid==True:
     if total1>total2:
         winnerscore=total1
         print("Player 1 has won!\nScoring",total1,"points!!")
-        print("000000000000")
-        print("0          0")
-        print("0  #    #  0")
-        print("0    #     0")
-        print("0  #    #  0")
-        print("0          0")
-        print("000000000000")
+        displayDice()
 
     elif total1<total2:
         winnerscore=total2
         print("Player 2 has won!\nScoring",total2,"points!!")
-        print("000000000000")
-        print("0          0")
-        print("0  #    #  0")
-        print("0    #     0")
-        print("0  #    #  0")
-        print("0          0")
-        print("000000000000")
+        displayDice()
 
     elif total1==total2:
         print("You two drew, roll one die each\nWhoever has highest wins")
@@ -239,25 +209,13 @@ if valid==True:
         if total1>total2:
             winnerscore=total1
             print("Player 1 has won!\nScoring",total1,"points!!")
-            print("000000000000")
-            print("0          0")
-            print("0  #    #  0")
-            print("0    #     0")
-            print("0  #    #  0")
-            print("0          0")
-            print("000000000000")
+            displayDice()
 
         elif total1<total2:
             winnerscore=total2
             print("Player 2 has won!\nScoring",total2,"points!!")
-            print("000000000000")
-            print("0          0")
-            print("0  #    #  0")
-            print("0    #     0")
-            print("0  #    #  0")
-            print("0          0")
-            print("000000000000")
-
+            displayDice()
+            
     #Saving the winner's name and score in an external file
     winnername=input("Winner, please enter your name")
     winnersFolder=open("winners.txt","a+")
